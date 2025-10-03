@@ -67,8 +67,6 @@ class TestDefaultsWithStorage(BaseTestDefaultsWith):
             "migrate": ANY,
             "url": ANY,
             "redis": None,
-            "skip_storage_requests_payload": [],
-            "skip_storage_responses_payload": [],
         }
 
         assert type(system.provider.get(IBlobStorage)).__name__ == "SqlBlobStorage"

@@ -12,6 +12,20 @@ from harp_apps.storage.utils.testing.mixins import StorageTestFixtureMixin
 from harp_apps.storage.worker import SKIP_REQUEST_PAYLOAD_STORAGE, StorageAsyncWorkerQueue
 
 
+rules_config = {
+    "billiv":{
+        "POST /api/uploads/*": {
+            "on_request": "transaction.markers.add('skip-request-payload-storage')"
+        },
+        "GET /health": {
+            "on_request": "transaction.markers.add('skip-request-payload-storage')"
+        },
+        "GET /api/downloads/*": {
+            "on_request": "transaction.markers.add('skip-response-payload-storage')"
+        }
+    }
+}
+
 class TestStorageAsyncWorkerQueue(StorageTestFixtureMixin, DispatcherTestFixtureMixin):
     def create_worker(
         self,
@@ -20,14 +34,18 @@ class TestStorageAsyncWorkerQueue(StorageTestFixtureMixin, DispatcherTestFixture
         sql_storage: IStorage,
         blob_storage: IBlobStorage,
     ) -> StorageAsyncWorkerQueue:
-        worker = StorageAsyncWorkerQueue(
-            engine,
-            sql_storage,
-            blob_storage,
-            skip_storage_requests_payload=[r"/api/uploads/.*", r"/health"],
-            skip_storage_responses_payload=[r"/api/downloads/.*"],
-        )
+        # Create rules engine
+        from harp_apps.rules.models.rulesets import RuleSet
+        from harp_apps.rules.subscribers import RulesSubscriber
+
+        ruleset = RuleSet()
+        ruleset.add(rules_config)  # Add the rules configuration
+        rules_subscriber = RulesSubscriber(ruleset)
+
+        worker = StorageAsyncWorkerQueue(engine, sql_storage, blob_storage)
         worker.register_events(dispatcher)
+        rules_subscriber.subscribe(dispatcher)  # Subscribe rules to events
+
         return worker
 
     async def test_skip_request_payload_storage_when_path_matches_pattern(

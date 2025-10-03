@@ -28,8 +28,6 @@ class TestSystemController(
                 "migrate": True,
                 "url": "sqlite+aiosqlite:///:memory:",
                 "redis": None,
-                "skip_storage_requests_payload": [],
-                "skip_storage_responses_payload": [],
             },
         }
 
@@ -45,8 +43,6 @@ class TestSystemController(
                 "migrate": True,
                 "url": "sqlite+aiosqlite:///:memory:",
                 "redis": {"url": "redis://redis.example.com:1234/42"},
-                "skip_storage_requests_payload": [],
-                "skip_storage_responses_payload": [],
             },
         }
 
@@ -61,8 +57,6 @@ class TestSystemController(
                 "migrate": True,
                 "url": "sqlite+aiosqlite:///:memory:",
                 "redis": None,
-                "skip_storage_requests_payload": [],
-                "skip_storage_responses_payload": [],
             },
         }
 
@@ -77,8 +71,6 @@ class TestSystemController(
                 "url": RE(r".*://test:\*\*\*@.*"),
                 "blobs": ANY,
                 "redis": None,
-                "skip_storage_requests_payload": [],
-                "skip_storage_responses_payload": [],
             },
         }
 
@@ -98,8 +90,7 @@ class TestSystemControllerThroughASGI(
         assert response["headers"] == ((b"content-type", b"application/json"),)
         assert response["body"] == (
             b'{"applications":["harp_apps.storage"],"storage":{"url":"sqlite+aiosqlite:///'
-            b':memory:","migrate":true,"blobs":{"type":"sql"},"redis":null,'
-            b'"skip_storage_requests_payload":[],"skip_storage_responses_payload":[]}}'
+            b':memory:","migrate":true,"blobs":{"type":"sql"},"redis":null}}'
         )
 
     @parametrize_with_settings({})
@@ -112,8 +103,7 @@ class TestSystemControllerThroughASGI(
         assert response["headers"] == ((b"content-type", b"application/json"),)
         assert response["body"] == (
             b'{"applications":["harp_apps.storage"],"storage":{"url":"sqlite+aiosqlite:///'
-            b':memory:","migrate":true,"blobs":{"type":"redis"},"redis":null,'
-            b'"skip_storage_requests_payload":[],"skip_storage_responses_payload":[]}}'
+            b':memory:","migrate":true,"blobs":{"type":"redis"},"redis":null}}'
         )
 
     @parametrize_with_settings(
@@ -131,8 +121,7 @@ class TestSystemControllerThroughASGI(
         assert response["headers"] == ((b"content-type", b"application/json"),)
         assert response["body"] == (
             b'{"applications":["harp_apps.storage"],"storage":{"url":"sqlite+aiosqlite:///'
-            b':memory:","migrate":true,"blobs":{"type":"sql"},"redis":null,'
-            b'"skip_storage_requests_payload":[],"skip_storage_responses_payload":[]}}'
+            b':memory:","migrate":true,"blobs":{"type":"sql"},"redis":null}}'
         )
 
     @parametrize_with_settings(
@@ -153,8 +142,7 @@ class TestSystemControllerThroughASGI(
         assert response["headers"] == ((b"content-type", b"application/json"),)
         assert response["body"] == (
             b'{"applications":["harp_apps.storage"],"storage":{"url":"sqlite+aiosqlite:///'
-            b':memory:","migrate":true,"blobs":{"type":"redis"},"redis":null,'
-            b'"skip_storage_requests_payload":[],"skip_storage_responses_payload":[]}}'
+            b':memory:","migrate":true,"blobs":{"type":"redis"},"redis":null}}'
         )
 
     @parametrize_with_database_urls("postgresql")
@@ -195,6 +183,5 @@ class TestSystemControllerThroughASGI(
         assert response["body"] == (
             b'{"applications":["harp_apps.storage"],"storage":{"url":"sqlite+aiosqlite:///'
             b':memory:","migrate":true,"blobs":{"type":"redis"},"redis":{"url":"redis://us'
-            b'er:***@localhost:6379/0"},'
-            b'"skip_storage_requests_payload":[],"skip_storage_responses_payload":[]}}'
+            b'er:***@localhost:6379/0"}}}'
         )
