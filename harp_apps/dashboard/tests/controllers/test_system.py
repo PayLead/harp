@@ -159,6 +159,8 @@ class TestSystemControllerThroughASGI(
                 "migrate": True,
                 "redis": None,
                 "url": RE(escape("postgresql+asyncpg://test:***@") + r".*"),
+                "skip_storage_requests_payload": [],
+                "skip_storage_responses_payload": [],
             },
         }
 
